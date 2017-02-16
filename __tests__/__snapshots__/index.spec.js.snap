@@ -1,0 +1,1 @@
+exports[`redux-lifesaver logs a warning to the console if the dispatch limit is exceeded within the configured limit duration 1`] = `"Over-exuberant dispatching of TEST_ACTION, throttling"`;

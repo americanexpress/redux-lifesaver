@@ -1,0 +1,15 @@
+# misc
+.DS_Store
+.idea
+.sass_cache
+
+# node/npm
+node_modules
+*.log
+
+# build
+lib
+
+# test
+.jscsrc
+test-results
