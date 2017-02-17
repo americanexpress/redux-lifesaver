@@ -1,0 +1,48 @@
+{
+  "name": "redux-lifesaver",
+  "version": "1.0.0",
+  "description": "Redux middleware to throttle actions of the same type",
+  "main": "lib/index.js",
+  "scripts": {
+    "clean": "rimraf lib",
+    "prebuild": "npm run lint && npm run clean",
+    "build": "babel src -d lib --copy-files",
+    "lint": "eslint ./ --ignore-path .eslintignore --ext .js",
+    "pretest": "npm run lint",
+    "test": "jest",
+    "prepublish": "npm run build",
+    "postinstall": "postinstall-build lib \"npm run build\""
+  },
+  "jest": {
+    "preset": "one-amex-jest-preset",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!**/node_modules/**"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh:****.com/uie/redux-lifesaver.git"
+  },
+  "keywords": [
+    "redux",
+    "middleware",
+    "throttle"
+  ],
+  "author": "UI Engineering",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "postinstall-build": "^2.1.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-holocron": "^0.2.0-pre",
+    "eslint": "^3.15.0",
+    "eslint-config-axp": "^2.1.0",
+    "jest": "^18.1.0",
+    "one-amex-jest-preset": "^2.0.0"
+  },
+  "peerDependencies": {
+    "redux": "*"
+  }
+}
