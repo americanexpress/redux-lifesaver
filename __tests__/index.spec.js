@@ -118,14 +118,12 @@ describe('redux-lifesaver', () => {
   });
 
   it('throttles many of the same action', () => {
-    it('lets through unique action types', () => {
-      let i = 0;
-      while (i < 20) {
-        middle(action);
-        i += 1;
-      }
-      expect(next).toHaveBeenCalledTimes(10);
-    });
+    let i = 0;
+    while (i < 20) {
+      middle(action);
+      i += 1;
+    }
+    expect(next).toHaveBeenCalledTimes(10);
   });
 
   it('lets through unique action types', () => {

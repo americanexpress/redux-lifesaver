@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
-    "babel-preset-holocron": "^0.2.0-pre-alpha.3d48789f",
+    "babel-preset-holocron": "^0.2.0-pre",
     "eslint": "^3.15.0",
     "eslint-config-axp": "^2.1.0",
     "jest": "^18.1.0",
