@@ -44,11 +44,32 @@ describe('redux-lifesaver', () => {
   });
 
   it('returns next if the delta is greater than the configured limit duration', () => {
-    middle(action);
+    let i = 0;
+    while (i < 9) {
+      middle(action);
+      i += 1;
+    }
     next.mockClear();
-    now = 200;
+    now = 101;
     middle(action);
     expect(next).toHaveBeenCalledWith(action);
+  });
+
+  it('allows the user to configure the limit duration (delta)', () => {
+    lifesaver = createLifesaverMiddleware(undefined, 200);
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 9) {
+      middle(action);
+      i += 1;
+    }
+    next.mockClear();
+    now = 101;
+    middle(action);
+    expect(next).toHaveBeenCalledWith({
+      type: ACTION_THROTTLED,
+      action,
+    });
   });
 
   it('returns next if the dispatch count is below the configured limit', () => {
@@ -76,7 +97,24 @@ describe('redux-lifesaver', () => {
     }
     expect(dispatch).not.toHaveBeenCalled();
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    jest.runOnlyPendingTimers();
+    jest.runTimersToTime(100);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('allows the user to configure the limit duration (timeout)', () => {
+    lifesaver = createLifesaverMiddleware(undefined, 200);
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 20) {
+      middle(action);
+      i += 1;
+    }
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(setTimeout).toHaveBeenCalledTimes(1);
+    jest.runTimersToTime(100);
+    expect(dispatch).not.toHaveBeenCalled();
+    jest.runTimersToTime(200);
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(action);
   });
@@ -117,6 +155,16 @@ describe('redux-lifesaver', () => {
     expect(middle(action)).toBe(null);
   });
 
+  it('returns null if the timeout has already been set even if the delta is greate than the limit duration', () => {
+    let i = 0;
+    while (i < 10) {
+      middle(action);
+      i += 1;
+    }
+    now = 101;
+    expect(middle(action)).toBe(null);
+  });
+
   it('throttles many of the same action', () => {
     let i = 0;
     while (i < 20) {
@@ -124,6 +172,17 @@ describe('redux-lifesaver', () => {
       i += 1;
     }
     expect(next).toHaveBeenCalledTimes(10);
+  });
+
+  it('allows the user to configure the dispatch limit', () => {
+    lifesaver = createLifesaverMiddleware(20);
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 40) {
+      middle(action);
+      i += 1;
+    }
+    expect(next).toHaveBeenCalledTimes(20);
   });
 
   it('lets through unique action types', () => {
