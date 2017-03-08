@@ -1,4 +1,7 @@
-import createLifesaverMiddleware, { ACTION_THROTTLED } from '../src';
+import createLifesaverMiddleware, {
+  ACTION_THROTTLED,
+  actionThrottled,
+} from '../src';
 
 jest.useFakeTimers();
 
@@ -38,6 +41,12 @@ describe('redux-lifesaver', () => {
     console.warn = cw;
   });
 
+  describe('actionThrottled', () => {
+    it('returns the expected action shape', () => {
+      expect(actionThrottled({ type: 'SOME_ACTION' })).toMatchSnapshot();
+    });
+  });
+
   it('returns next if there is no record', () => {
     middle(action);
     expect(next).toHaveBeenCalledWith(action);
@@ -56,17 +65,16 @@ describe('redux-lifesaver', () => {
   });
 
   it('allows the user to configure the limit duration (delta)', () => {
-    lifesaver = createLifesaverMiddleware(undefined, 200);
+    lifesaver = createLifesaverMiddleware({ limitDuration: 200 });
     middle = lifesaver({ dispatch })(next);
     let i = 0;
     while (i < 9) {
       middle(action);
       i += 1;
     }
-    next.mockClear();
     now = 101;
     middle(action);
-    expect(next).toHaveBeenCalledWith({
+    expect(dispatch).toHaveBeenLastCalledWith({
       type: ACTION_THROTTLED,
       action,
     });
@@ -95,37 +103,64 @@ describe('redux-lifesaver', () => {
       middle(action);
       i += 1;
     }
-    expect(dispatch).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(actionThrottled(action));
     expect(setTimeout).toHaveBeenCalledTimes(1);
     jest.runTimersToTime(100);
-    expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledWith(action);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenLastCalledWith(action);
   });
 
   it('allows the user to configure the limit duration (timeout)', () => {
-    lifesaver = createLifesaverMiddleware(undefined, 200);
+    lifesaver = createLifesaverMiddleware({ limitDuration: 200 });
     middle = lifesaver({ dispatch })(next);
     let i = 0;
     while (i < 20) {
       middle(action);
       i += 1;
     }
-    expect(dispatch).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(actionThrottled(action));
     expect(setTimeout).toHaveBeenCalledTimes(1);
     jest.runTimersToTime(100);
-    expect(dispatch).not.toHaveBeenCalled();
-    jest.runTimersToTime(200);
     expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledWith(action);
+    jest.runTimersToTime(200);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenLastCalledWith(action);
   });
 
-  it('returns next with a THROTTLED_ACTION if the dispatch limit is exceeded within the configured limit duration', () => {
+  it('allows the user to configure the limit duration (timeout) for a particular action', () => {
+    const specialAction = { type: 'SOME_SPECIAL_ACTION' };
+    lifesaver = createLifesaverMiddleware({
+      actionTypes: {
+        [specialAction.type]: {
+          limitDuration: 200,
+        },
+      },
+    });
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 20) {
+      middle(specialAction);
+      i += 1;
+    }
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(actionThrottled(specialAction));
+    expect(setTimeout).toHaveBeenCalledTimes(1);
+    jest.runTimersToTime(100);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    jest.runTimersToTime(200);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenLastCalledWith(specialAction);
+  });
+
+  it('returns a dispatch of ACTION_THROTTLED if the dispatch limit is exceeded within the configured limit duration', () => {
     let i = 0;
     while (i < 10) {
       middle(action);
       i += 1;
     }
-    expect(next).toHaveBeenLastCalledWith({
+    expect(dispatch).toHaveBeenLastCalledWith({
       type: ACTION_THROTTLED,
       action,
     });
@@ -139,11 +174,12 @@ describe('redux-lifesaver', () => {
     }
     const newAction = { data: 'data', ...action };
     middle(newAction);
-    expect(dispatch).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(actionThrottled(action));
     expect(setTimeout).toHaveBeenCalledTimes(1);
     jest.runOnlyPendingTimers();
-    expect(dispatch).toHaveBeenCalledTimes(1);
-    expect(dispatch).toHaveBeenCalledWith(newAction);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch).toHaveBeenLastCalledWith(newAction);
   });
 
   it('returns null if the timeout has already been set', () => {
@@ -171,18 +207,36 @@ describe('redux-lifesaver', () => {
       middle(action);
       i += 1;
     }
-    expect(next).toHaveBeenCalledTimes(10);
+    expect(next).toHaveBeenCalledTimes(9);
   });
 
   it('allows the user to configure the dispatch limit', () => {
-    lifesaver = createLifesaverMiddleware(20);
+    lifesaver = createLifesaverMiddleware({ dispatchLimit: 20 });
     middle = lifesaver({ dispatch })(next);
     let i = 0;
     while (i < 40) {
       middle(action);
       i += 1;
     }
-    expect(next).toHaveBeenCalledTimes(20);
+    expect(next).toHaveBeenCalledTimes(19);
+  });
+
+  it('allows the user to configure the dispatch limit for a particular action', () => {
+    const specialAction = { type: 'SOME_SPECIAL_ACTION' };
+    lifesaver = createLifesaverMiddleware({
+      actionTypes: {
+        [specialAction.type]: {
+          dispatchLimit: 20,
+        },
+      },
+    });
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 40) {
+      middle(specialAction);
+      i += 1;
+    }
+    expect(next).toHaveBeenCalledTimes(19);
   });
 
   it('lets through unique action types', () => {
@@ -192,5 +246,14 @@ describe('redux-lifesaver', () => {
       i += 1;
     }
     expect(next).toHaveBeenCalledTimes(20);
+  });
+
+  it('does not limit its own action', () => {
+    let i = 0;
+    while (i < 50) {
+      middle(actionThrottled(action));
+      i += 1;
+    }
+    expect(next).toHaveBeenCalledTimes(50);
   });
 });

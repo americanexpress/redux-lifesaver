@@ -1,7 +1,29 @@
-export const ACTION_THROTTLED = 'lifesaver/ACTION_THROTTLED';
+import get from 'lodash/get';
 
-export default function createLifesaverMiddleware(dispatchLimit = 10, limitDuration = 100) {
+export const ACTION_THROTTLED = '@@lifesaver/ACTION_THROTTLED';
+export const actionThrottled = action => ({
+  type: ACTION_THROTTLED,
+  action,
+});
+
+export default function createLifesaverMiddleware({
+  dispatchLimit = 10,
+  limitDuration = 100,
+  actionTypes = {},
+} = {}) {
+  const ownActionTypes = {
+    [ACTION_THROTTLED]: {
+      limitDuration: 0,
+    },
+  };
+  const actionConfig = Object.assign({}, ownActionTypes, actionTypes);
   const pastActions = {};
+
+  const getDispatchLimit = action =>
+    get(actionConfig, [action.type, 'dispatchLimit'], dispatchLimit);
+
+  const getLimitDuration = action =>
+    get(actionConfig, [action.type, 'limitDuration'], limitDuration);
 
   return ({ dispatch }) => next => (action) => {
     const now = Date.now();
@@ -20,14 +42,14 @@ export default function createLifesaverMiddleware(dispatchLimit = 10, limitDurat
       return next(action);
     }
 
-    if (now - actionRecord.time > limitDuration && !actionRecord.timeout) {
+    if (now - actionRecord.time >= getLimitDuration(action) && !actionRecord.timeout) {
       // If it has been longer since the recorded time than the limit duration,
       // and no timeout has been set, refresh the action record and continue.
       pastActions[action.type] = freshRecord;
       return next(action);
     }
 
-    if (actionRecord.count < dispatchLimit) {
+    if (actionRecord.count < getDispatchLimit(action)) {
       // If the dispatch count is below the limit, continue.
       return next(action);
     }
@@ -42,12 +64,9 @@ export default function createLifesaverMiddleware(dispatchLimit = 10, limitDurat
       // If there is no timeout set already, warn the user,
       console.warn(`Over-exuberant dispatching of ${action.type}, throttling`);
       // set the timeout,
-      actionRecord.timeout = setTimeout(() => actionRecord.next(), limitDuration);
-      // and continue, but with ACTION_THROTTLED action.
-      return next({
-        type: ACTION_THROTTLED,
-        action,
-      });
+      actionRecord.timeout = setTimeout(() => actionRecord.next(), getLimitDuration(action));
+      // and dispatch ACTION_THROTTLED action.
+      return dispatch(actionThrottled(action));
     }
 
     // If an action is being throttled, but the timeout is already set, return null.

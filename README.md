@@ -14,4 +14,14 @@ const store = createStore(
 );
 ```
 
-`lifesaver` accepts two optional positional arguments, `dispatchLimit` and `limitDuration`. Where `dispatchLimit` is the number of dispatches allowed for a single action type in a given period, and `limitDuration` is the duration of that period in milliseconds. `dispatchLimit` defaults to `10`, and `limitDuration` to `100`.
+`lifesaver` accepts a configuration object with three optional properties, `dispatchLimit`, `limitDuration`, and `actionTypes`. Where `dispatchLimit` is the number of dispatches allowed for a single action type in a given period, and `limitDuration` is the duration of that period in milliseconds. `dispatchLimit` defaults to `10`, and `limitDuration` to `100`. `actionTypes` should be an object with keys that are action types that you want to have a special configuration. The values are objects that contain `dispatchLimit` and/or `limitDuration`. For instance, if you had a `VERY_SPECIAL_ACTION` that shouldn't be limited at all, your configuration object may look like this:
+
+```js
+import { VERY_SPECIAL_ACTION } from './path/to/my/duck';
+
+const lifesaverConfig = {
+  [VERY_SPECIAL_ACTION]: {
+    limitDuration: 0,
+  },
+};
+```
