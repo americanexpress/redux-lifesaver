@@ -239,6 +239,25 @@ describe('redux-lifesaver', () => {
     expect(next).toHaveBeenCalledTimes(19);
   });
 
+  it('allows the user to configure an action creator for lifesaver to use', () => {
+    const date = Date.now();
+    const actionCreator = jest.fn(throttledAction => ({
+      type: ACTION_THROTTLED,
+      other: 'data',
+      throttledAction,
+      date,
+    }));
+    lifesaver = createLifesaverMiddleware({ actionCreator });
+    middle = lifesaver({ dispatch })(next);
+    let i = 0;
+    while (i < 20) {
+      middle(action);
+      i += 1;
+    }
+    expect(actionCreator).toHaveBeenCalledWith(action);
+    expect(dispatch).toHaveBeenLastCalledWith(actionCreator(action));
+  });
+
   it('lets through unique action types', () => {
     let i = 0;
     while (i < 20) {

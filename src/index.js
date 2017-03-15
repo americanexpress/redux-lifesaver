@@ -10,6 +10,7 @@ export default function createLifesaverMiddleware({
   dispatchLimit = 10,
   limitDuration = 100,
   actionTypes = {},
+  actionCreator = actionThrottled,
 } = {}) {
   const ownActionTypes = {
     [ACTION_THROTTLED]: {
@@ -66,7 +67,7 @@ export default function createLifesaverMiddleware({
       // set the timeout,
       actionRecord.timeout = setTimeout(() => actionRecord.next(), getLimitDuration(action));
       // and dispatch ACTION_THROTTLED action.
-      return dispatch(actionThrottled(action));
+      return dispatch(actionCreator(action));
     }
 
     // If an action is being throttled, but the timeout is already set, return null.
