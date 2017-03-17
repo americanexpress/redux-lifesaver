@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`redux-lifesaver actionThrottled returns the expected action shape 1`] = `
 Object {
   "action": Object {
