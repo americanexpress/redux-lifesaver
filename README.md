@@ -57,5 +57,5 @@ We welcome Your interest in the American Express Open Source Community on Github
 Any contributions made under this project will be governed by the [Apache License 2.0](https://github.com/americanexpress/redux-lifesaver/blob/master/LICENSE.txt).
 
 ## Code of Conduct
-This project adheres to the [American Express Community Guidelines](https://github.com/americanexpress/react-albus/wiki/Code-of-Conduct).
+This project adheres to the [American Express Community Guidelines](https://github.com/americanexpress/redux-lifesaver/wiki/Code-of-Conduct).
 By participating, you are expected to honor these guidelines.
