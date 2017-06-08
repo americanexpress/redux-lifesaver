@@ -1,6 +1,6 @@
 {
   "name": "redux-lifesaver",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Redux middleware to throttle actions of the same type",
   "main": "lib/index.js",
   "scripts": {
