@@ -1,6 +1,6 @@
 {
   "name": "redux-lifesaver",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Redux middleware to throttle actions of the same type",
   "main": "lib/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint ./ --ignore-path .eslintignore --ext .js",
     "pretest": "npm run lint",
     "test": "jest",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "postinstall": "postinstall-build lib \"npm run build\""
   },
   "jest": {
@@ -41,8 +41,8 @@
     "babel-cli": "^6.24.0",
     "babel-preset-amex": "^1.0.0",
     "eslint": "^3.18.0",
-    "eslint-config-amex": "^4.0.0",
-    "jest": "^19.0.2"
+    "eslint-config-amex": "^6.0.0",
+    "jest": "^20.0.0"
   },
   "peerDependencies": {
     "redux": "*"
