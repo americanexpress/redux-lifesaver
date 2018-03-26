@@ -1,5 +1,8 @@
 # redux-lifesaver
 
+[![npm version](https://badge.fury.io/js/redux-lifesaver.svg)](https://badge.fury.io/js/redux-lifesaver)
+[![Build Status](https://travis-ci.org/americanexpress/redux-lifesaver.svg?branch=master)](https://travis-ci.org/americanexpress/redux-lifesaver)
+
 `lifesaver` is a middleware that keeps track of how many times actions of the
 same type are dispatched within a given period. If a single action type is
 dispatched more times than the allowed amount within a given period, subsequent
