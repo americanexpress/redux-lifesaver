@@ -37,12 +37,13 @@
     "postinstall-build": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
     "amex-jest-preset": "^3.0.0",
-    "babel-cli": "^6.24.0",
-    "babel-preset-amex": "^1.0.0",
+    "babel-preset-amex": "^2.0.0",
     "eslint": "^3.18.0",
     "eslint-config-amex": "^6.0.0",
-    "jest": "^20.0.0"
+    "jest": "^24.1.0"
   },
   "peerDependencies": {
     "redux": "*"
