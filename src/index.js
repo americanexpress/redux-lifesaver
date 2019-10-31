@@ -12,13 +12,15 @@
  * the License.
  */
 
-import get from 'lodash/get';
-
 export const ACTION_THROTTLED = '@@lifesaver/ACTION_THROTTLED';
 export const actionThrottled = action => ({
   type: ACTION_THROTTLED,
   action,
 });
+
+const get = (source, path, defaultValue) => path.reduce((acc, place) =>
+  (acc[place] === undefined || acc === defaultValue ? defaultValue : acc[place])
+  , source);
 
 export default function createLifesaverMiddleware({
   dispatchLimit = 10,

@@ -10,8 +10,7 @@
     "lint": "eslint ./ --ignore-path .eslintignore --ext .js",
     "pretest": "npm run lint",
     "test": "jest",
-    "prepublishOnly": "npm run build",
-    "postinstall": "postinstall-build lib \"npm run build\""
+    "prepack": "npm run build"
   },
   "jest": {
     "preset": "amex-jest-preset",
@@ -32,10 +31,6 @@
   ],
   "author": "Jimmy King <jimmy.king@aexp.com> (https://github.com/10xLaCroixDrinker)",
   "license": "Apache-2.0",
-  "dependencies": {
-    "lodash": "^4.17.4",
-    "postinstall-build": "^3.0.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
