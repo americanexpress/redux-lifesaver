@@ -2,6 +2,7 @@
 .DS_Store
 .idea
 .sass_cache
+commitlint.config.js
 
 # node/npm
 node_modules
