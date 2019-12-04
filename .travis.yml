@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "12"
   - "10"
+before_install:
+  # Create a master branch commitlint
+  - git remote set-branches origin master && git fetch
 deploy:
   on:
     tags: true
