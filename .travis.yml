@@ -3,7 +3,8 @@ node_js:
   - "12"
   - "10"
 before_install:
-  # Create a master branch commitlint
+  # Create a master branch for commitlint
+  # https://github.com/conventional-changelog/commitlint/issues/6
   - git remote set-branches origin master && git fetch
 deploy:
   on:
