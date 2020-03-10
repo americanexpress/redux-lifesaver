@@ -45,7 +45,7 @@
     "eslint-config-amex": "^6.0.0",
     "husky": "^3.1.0",
     "jest": "^24.1.0",
-    "lockfile-lint": "^3.0.8"
+    "lockfile-lint": "^4.1.0"
   },
   "peerDependencies": {
     "redux": "*"
