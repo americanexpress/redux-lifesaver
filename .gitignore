@@ -13,3 +13,4 @@ lib
 # test
 .jscsrc
 test-results
+.jest-cache
