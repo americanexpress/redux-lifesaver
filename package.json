@@ -5,15 +5,15 @@
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
-    "prebuild": "npm run lint && npm run clean",
+    "prebuild": "npm run clean",
     "build": "babel src -d lib --copy-files",
-    "lint": "eslint ./ --ignore-path .eslintignore --ext .js",
-    "pretest": "npm run lint",
-    "test": "jest",
-    "test:git-history": "commitlint --from origin/master --to HEAD",
+    "test": "npm run test:lint && npm run test:unit",
+    "test:lint": "eslint ./ --ignore-path .eslintignore --ext .js",
     "test:lockfile": "lockfile-lint -p package-lock.json -t npm -a npm -o https: -c -i",
-    "posttest": "npm run lint && npm run test:git-history && npm run test:lockfile",
-    "prepack": "npm run build"
+    "test:git-history": "commitlint --from origin/main --to HEAD",
+    "test:unit": "jest",
+    "posttest": "npm run test:git-history && npm run test:lockfile",
+    "prepare": "npm run build"
   },
   "jest": {
     "preset": "amex-jest-preset",
@@ -39,13 +39,19 @@
     "@babel/core": "^7.10.1",
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/github": "^7.1.1",
+    "@semantic-release/npm": "^7.0.6",
+    "@semantic-release/release-notes-generator": "^9.0.1",
     "amex-jest-preset": "^6.1.0",
     "babel-preset-amex": "^3.4.0",
     "eslint": "^4.18.2",
     "eslint-config-amex": "^6.0.0",
     "husky": "^3.1.0",
     "jest": "^24.1.0",
-    "lockfile-lint": "^4.1.0"
+    "lockfile-lint": "^4.3.7",
+    "semantic-release": "^17.1.2"
   },
   "peerDependencies": {
     "redux": "*"
@@ -55,5 +61,29 @@
       "pre-commit": "npm test",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "main",
+      "next",
+      "next-major",
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ]
   }
 }

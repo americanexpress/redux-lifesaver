@@ -1,7 +1,7 @@
 # redux-lifesaver
 
 [![npm version](https://badge.fury.io/js/redux-lifesaver.svg)](https://badge.fury.io/js/redux-lifesaver)
-[![Build Status](https://travis-ci.org/americanexpress/redux-lifesaver.svg?branch=master)](https://travis-ci.org/americanexpress/redux-lifesaver)
+![Health Check](https://github.com/americanexpress/redux-lifesaver/workflows/Health%20Check/badge.svg)
 
 > Want to get paid for your contributions to `redux-lifesaver`?
 > Send your resume to oneamex.careers@aexp.com
@@ -83,7 +83,7 @@ out the Agreement](https://cla-assistant.io/americanexpress/).
 
 ## License
 Any contributions made under this project will be governed by the [Apache License
-2.0](https://github.com/americanexpress/redux-lifesaver/blob/master/LICENSE.txt).
+2.0](https://github.com/americanexpress/redux-lifesaver/blob/main/LICENSE.txt).
 
 ## Code of Conduct
 This project adheres to the [American Express Community Guidelines](https://github.com/americanexpress/redux-lifesaver/wiki/Code-of-Conduct).
