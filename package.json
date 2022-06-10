@@ -52,7 +52,7 @@
     "husky": "^3.1.0",
     "jest": "^24.1.0",
     "lockfile-lint": "^4.3.7",
-    "semantic-release": "^17.1.2"
+    "semantic-release": "^19.0.3"
   },
   "peerDependencies": {
     "redux": "*"
