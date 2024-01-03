@@ -13,14 +13,17 @@
  */
 
 export const ACTION_THROTTLED = '@@lifesaver/ACTION_THROTTLED';
-export const actionThrottled = action => ({
+export const actionThrottled = (action) => ({
   type: ACTION_THROTTLED,
   action,
 });
 
 const get = (source, path, defaultValue) => path.reduce((acc, place) =>
-  (acc[place] === undefined || acc === defaultValue ? defaultValue : acc[place])
-  , source);
+  // eslint-disable-next-line implicit-arrow-linebreak -- rule conflicts wil max-len
+  (acc[place] === undefined || acc === defaultValue
+    ? defaultValue
+    : acc[place]),
+source);
 
 export default function createLifesaverMiddleware({
   dispatchLimit = 10,
@@ -33,16 +36,14 @@ export default function createLifesaverMiddleware({
       limitDuration: 0,
     },
   };
-  const actionConfig = Object.assign({}, ownActionTypes, actionTypes);
+  const actionConfig = { ...ownActionTypes, ...actionTypes };
   const pastActions = {};
 
-  const getDispatchLimit = action =>
-    get(actionConfig, [action.type, 'dispatchLimit'], dispatchLimit);
+  const getDispatchLimit = (action) => get(actionConfig, [action.type, 'dispatchLimit'], dispatchLimit);
 
-  const getLimitDuration = action =>
-    get(actionConfig, [action.type, 'limitDuration'], limitDuration);
+  const getLimitDuration = (action) => get(actionConfig, [action.type, 'limitDuration'], limitDuration);
 
-  return ({ dispatch }) => next => (action) => {
+  return ({ dispatch }) => (next) => (action) => {
     const now = Date.now();
     const actionRecord = pastActions[action.type];
     const freshRecord = {

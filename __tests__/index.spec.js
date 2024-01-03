@@ -17,11 +17,10 @@ import createLifesaverMiddleware, {
   actionThrottled,
 } from '../src';
 
-jest.useFakeTimers();
+jest.useFakeTimers({ legacyFakeTimers: true });
 
 describe('redux-lifesaver', () => {
   let dn;
-  let cw;
   let lifesaver;
   let middle;
   let now = 0;
@@ -30,21 +29,19 @@ describe('redux-lifesaver', () => {
 
   const action = { type: 'TEST_ACTION' };
 
+  const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
   beforeAll(() => {
     dn = Date.now;
-    cw = console.warn;
     Date.now = jest.fn(() => {
       now += 1;
       return now;
     });
-    console.warn = jest.fn();
   });
 
   beforeEach(() => {
     jest.clearAllTimers();
-    setTimeout.mockClear();
-    dispatch.mockClear();
-    next.mockClear();
+    jest.clearAllMocks();
     now = 0;
     lifesaver = createLifesaverMiddleware();
     middle = lifesaver({ dispatch })(next);
@@ -52,7 +49,6 @@ describe('redux-lifesaver', () => {
 
   afterAll(() => {
     Date.now = dn;
-    console.warn = cw;
   });
 
   describe('actionThrottled', () => {
@@ -107,8 +103,8 @@ describe('redux-lifesaver', () => {
       middle(action);
       i += 1;
     }
-    expect(console.warn).toHaveBeenCalled();
-    expect(console.warn.mock.calls[0][0]).toMatchSnapshot();
+    expect(consoleWarnSpy).toHaveBeenCalled();
+    expect(consoleWarnSpy.mock.calls[0][0]).toMatchSnapshot();
   });
 
   it('sets a timeout to dispatch the action if the dispatch limit is exceeded within the configured limit duration', () => {
@@ -120,7 +116,7 @@ describe('redux-lifesaver', () => {
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(actionThrottled(action));
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    jest.runTimersToTime(100);
+    jest.advanceTimersByTime(100);
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch).toHaveBeenLastCalledWith(action);
   });
@@ -136,9 +132,9 @@ describe('redux-lifesaver', () => {
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(actionThrottled(action));
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    jest.runTimersToTime(100);
+    jest.advanceTimersByTime(100);
     expect(dispatch).toHaveBeenCalledTimes(1);
-    jest.runTimersToTime(200);
+    jest.advanceTimersByTime(200);
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch).toHaveBeenLastCalledWith(action);
   });
@@ -161,9 +157,9 @@ describe('redux-lifesaver', () => {
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledWith(actionThrottled(specialAction));
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    jest.runTimersToTime(100);
+    jest.advanceTimersByTime(100);
     expect(dispatch).toHaveBeenCalledTimes(1);
-    jest.runTimersToTime(200);
+    jest.advanceTimersByTime(200);
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch).toHaveBeenLastCalledWith(specialAction);
   });
@@ -255,7 +251,7 @@ describe('redux-lifesaver', () => {
 
   it('allows the user to configure an action creator for lifesaver to use', () => {
     const date = Date.now();
-    const actionCreator = jest.fn(throttledAction => ({
+    const actionCreator = jest.fn((throttledAction) => ({
       type: ACTION_THROTTLED,
       other: 'data',
       throttledAction,
